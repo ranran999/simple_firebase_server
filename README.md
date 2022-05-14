@@ -1,0 +1,2 @@
+# simple_firebase_server
+Firebseのサーバサイドの共通的なロジックまとめ
