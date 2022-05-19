@@ -23,8 +23,9 @@ const all = async (req: express.Request, res: express.Response) => {
       path = "store/" + path;
       const ss = await f.app.database().ref(path).get();
       if (ss.exists()) {
+        console.log(path + " is exists.");
         res.status(500).send(path + " is exists.");
-        return
+        return;
       } else {
         await ss.ref.set({ init: true, createdAt: Date.now() })
       }
