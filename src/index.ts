@@ -1,3 +1,4 @@
+import axios from 'axios';
 import 'dotenv/config'
 import express from "express"
 import { Firebase } from './firebaseWrap';
@@ -40,6 +41,54 @@ const all = async (req: express.Request, res: express.Response) => {
       const customToken = await f.idToken2CustomToken(idToken);
 
       res.end(JSON.stringify({ customToken, refreshToken, idToken }));
+      break
+    }
+    case "COS": {
+      const url = req.query["@url"] as string;
+      const headers = JSON.parse(req.query["@headers"] as string | null || "{}");
+      const config = {
+        headers: {
+          ...headers
+        },
+        responseType: 'stream'
+      };
+      try {
+        const response = await axios(url, config as any)
+        Object.keys(response.headers)
+          .forEach((key: string) => {
+            res.setHeader(key, response.headers[key]);
+          })
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Headers', 'Origin, Authorization, Accept, Content-Type');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        response.data.pipe(res)
+      } catch (e: any) {
+        res.status(500).send(e.message);
+      }
+      break
+    }
+    case "proxy": {
+      const url = req.query["@url"] as string;
+      const headers = JSON.parse(req.query["@headers"] as string | null || "{}");
+      const config = {
+        headers: {
+          ...headers
+        },
+        responseType: 'stream'
+      };
+      try {
+        const response = await axios(url, config as any)
+        Object.keys(response.headers)
+          .forEach((key: string) => {
+            res.setHeader(key, response.headers[key]);
+          })
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Headers', 'Origin, Authorization, Accept, Content-Type');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        response.data.pipe(res)
+      } catch (e: any) {
+        res.status(500).send(e.message);
+      }
       break
     }
     default:

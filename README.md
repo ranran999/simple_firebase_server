@@ -154,13 +154,12 @@ API 化されていない普通の Web ページから一部だけ情報がほ�
 input:
 
 ```
-@action = COS
-@url = $url
-@option = {$option}
+@action = COS (required)
+@url = $url (required)
+@headers =@headers = {$headers} (defaut:"{}")
 ```
 
-output:
-{body}
+output:Http Stream
 
 ## proxy
 
@@ -169,9 +168,9 @@ output:
 input:
 
 ```
-@action = proxy
-@url = $url
-@option = {$option}
+@action = proxy (required)
+@url = $url (required)
+@headers = {$headers} (defaut:"{}")
 ```
 
-output:HTML Stream
+output:Http Stream
