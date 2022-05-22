@@ -14,8 +14,8 @@ heroku にデプロイすることを想定
 input:
 
 ```
-$$action = createNode (required)
-$$path = $path (defaut:"p" + Date.now())
+@action = createNode (required)
+@path = $path (defaut:"p" + Date.now())
 ```
 
 output:
@@ -24,7 +24,8 @@ output:
 1. customToken:１時間で有効期限が切れるカスタムトークン
 2. refreshToken:永続トークン（認証を永続化する場合はこのトークンを保存すること）
 3. idToken:１時間で有効期限が切れるREST API等で利用するトークン
-4. path:発行されたパス
+4. databaseURL:Firebase databaseのURL
+5. path:発行されたFirebase databaseのパス
 
 ## Firebase のトークン発行（Refreshトークン（永続トークン）から変換）
 
@@ -33,8 +34,8 @@ createFirebaseNodeで取得したrefreshTokenからその他のトークンを�
 input:
 
 ```
-$$action = getToken (required)
-$$refreshToken = $refreshToken (required)
+@action = getToken (required)
+@refreshToken = $refreshToken (required)
 ```
 
 output:
@@ -51,9 +52,9 @@ API 化されていない普通の Web ページから一部だけ情報がほ�
 input:
 
 ```
-$$action = COS
-$$url = $url
-$$option = {$option}
+@action = COS
+@url = $url
+@option = {$option}
 ```
 
 output:
@@ -66,9 +67,9 @@ output:
 input:
 
 ```
-$$action = proxy
-$$url = $url
-$$option = {$option}
+@action = proxy
+@url = $url
+@option = {$option}
 ```
 
 output:HTML Stream

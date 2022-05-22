@@ -1,23 +1,25 @@
 import axios from 'axios';
 import * as admin from 'firebase-admin'
-import { initializeApp, FirebaseOptions } from "firebase/app";
+import { initializeApp, FirebaseOptions, FirebaseApp } from "firebase/app";
 
 import { signInWithCustomToken, getAuth, User } from "firebase/auth";
 
 export class Firebase {
   project_id: string;
   app: admin.app.App;
-  frontApp: any;
-  apiKey: any;
-  constructor(frontInit: FirebaseOptions, serverInit: object, databaseURL: string, project_id: string) {
-    this.project_id = project_id;
-    this.apiKey = frontInit.apiKey;
-    this.app = admin.apps.find(e => e?.name === project_id)
+  frontApp: FirebaseApp;
+  apiKey: string;
+  databaseURL: string;
+  constructor(frontInit: FirebaseOptions, serverInit: admin.ServiceAccount) {
+    this.project_id = frontInit.projectId!;
+    this.apiKey = frontInit.apiKey!;
+    this.databaseURL = frontInit.databaseURL!;
+    this.app = admin.apps.find(e => e?.name === this.project_id)
       || admin.initializeApp({
         credential: admin.credential.cert(serverInit),
-        databaseURL
-      }, project_id)
-    this.frontApp = initializeApp(frontInit, project_id);
+        databaseURL: this.databaseURL
+      }, this.project_id)
+    this.frontApp = initializeApp(frontInit, this.project_id);
   }
   /* 1時間で無効になるトークンを返却 */
   async createAdminCustomToken(path: string) {
@@ -46,6 +48,7 @@ export class Firebase {
   /* IDトークンから１時間で切れるカスタムトークンを返却 */
   async idToken2CustomToken(idToken: string) {
     const decode = await this.app.auth().verifyIdToken(idToken)
+    console.log(decode);
     const uid = decode.uid;
     const claims = {} as { [key: string]: string };
     // デフォルトキー以外を詰め替え

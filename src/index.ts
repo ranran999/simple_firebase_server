@@ -4,21 +4,19 @@ import { Firebase } from './firebaseWrap';
 const app = express();
 const FIREBASE_SERVER_INIT = JSON.parse(process.env.FIREBASE_SERVER_INIT as string);
 const FIREBASE_FRONT_INIT = JSON.parse(process.env.FIREBASE_FRONT_INIT as string);
-const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID as string;
-const FIREBASE_DATABASE_URL = process.env.FIREBASE_DATABASE_URL as string;
 
 app.set("port", process.env.PORT || 5000);
 app.use(express.static(__dirname + "/public"));
 //今のところ一つでOK
-const f = new Firebase(FIREBASE_FRONT_INIT, FIREBASE_SERVER_INIT, FIREBASE_DATABASE_URL, FIREBASE_PROJECT_ID);
+const f = new Firebase(FIREBASE_FRONT_INIT, FIREBASE_SERVER_INIT);
 const all = async (req: express.Request, res: express.Response) => {
-  switch (req.query["$$action"]) {
+  switch (req.query["@action"]) {
     case "createNode": {
-      let path = req.query["$$path"] as string;
+      let path = req.query["@path"] as string;
       if (!path) {
         path = "p" + Date.now();
       } else {
-        path = path.split("/")[0]
+        path = path.indexOf("/") === 0 ? path.substring(1) : path
       }
       path = "store/" + path;
       const ss = await f.app.database().ref(path).get();
@@ -32,15 +30,17 @@ const all = async (req: express.Request, res: express.Response) => {
       const customToken = await f.createAdminCustomToken(path);
       const refreshToken = await f.customToken2refreshToken(customToken);
       const idToken = await f.refreshToken2idToken(refreshToken);
-
-      res.end(JSON.stringify({ customToken, refreshToken, idToken, path }));
+      const databaseURL = f.databaseURL;
+      res.end(JSON.stringify({ customToken, refreshToken, idToken, path, databaseURL }));
+      break
     }
     case "getToken": {
-      const refreshToken = req.query["$$refreshToken"] as string;
+      const refreshToken = req.query["@refreshToken"] as string;
       const idToken = await f.refreshToken2idToken(refreshToken);
       const customToken = await f.idToken2CustomToken(idToken);
 
       res.end(JSON.stringify({ customToken, refreshToken, idToken }));
+      break
     }
     default:
       res.end("ok");
