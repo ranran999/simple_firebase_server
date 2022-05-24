@@ -53,7 +53,7 @@ const all = async (req: express.Request, res: express.Response) => {
         responseType: 'stream'
       };
       try {
-        const response = await axios(url, config as any)
+        const response = await axios(encodeURI(url), config as any)
         Object.keys(response.headers)
           .forEach((key: string) => {
             res.setHeader(key, response.headers[key]);
@@ -77,7 +77,7 @@ const all = async (req: express.Request, res: express.Response) => {
         responseType: 'stream'
       };
       try {
-        const response = await axios(url, config as any)
+        const response = await axios(encodeURI(url), config as any)
         Object.keys(response.headers)
           .forEach((key: string) => {
             res.setHeader(key, response.headers[key]);
