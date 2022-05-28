@@ -16,4 +16,7 @@
 		"--env-file",
 		".env"
 	]
+	,"features": {
+		"docker-in-docker": "latest"
+	}
 }
