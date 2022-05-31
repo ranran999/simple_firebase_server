@@ -1,6 +1,7 @@
 import axios from 'axios';
 import 'dotenv/config'
 import express from "express"
+import cors from "cors"
 import { Firebase } from './firebaseWrap';
 const app = express();
 const FIREBASE_SERVER_INIT = JSON.parse(process.env.FIREBASE_SERVER_INIT as string);
@@ -8,6 +9,8 @@ const FIREBASE_FRONT_INIT = JSON.parse(process.env.FIREBASE_FRONT_INIT as string
 
 app.set("port", process.env.PORT || 5000);
 app.use(express.static(__dirname + "/public"));
+app.use(cors())
+
 //今のところ一つでOK
 const f = new Firebase(FIREBASE_FRONT_INIT, FIREBASE_SERVER_INIT);
 const all = async (req: express.Request, res: express.Response) => {
@@ -58,9 +61,6 @@ const all = async (req: express.Request, res: express.Response) => {
           .forEach((key: string) => {
             res.setHeader(key, response.headers[key]);
           })
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Headers', 'Origin, Authorization, Accept, Content-Type');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
         response.data.pipe(res)
       } catch (e: any) {
         res.status(500).send(e.message);
@@ -71,20 +71,20 @@ const all = async (req: express.Request, res: express.Response) => {
       const url = req.query["@url"] as string;
       const headers = JSON.parse(req.query["@headers"] as string | null || "{}");
       const config = {
-        headers: {
-          ...headers
-        },
+        headers: { ...headers },
         responseType: 'stream'
-      };
+      } as any;
+
+      if (req.method != "GET") {
+        config.data = req;
+        config.method = req.method;
+      }
       try {
-        const response = await axios(encodeURI(url), config as any)
+        const response = await axios(encodeURI(url), config)
         Object.keys(response.headers)
           .forEach((key: string) => {
             res.setHeader(key, response.headers[key]);
           })
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Headers', 'Origin, Authorization, Accept, Content-Type');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
         response.data.pipe(res)
       } catch (e: any) {
         res.status(500).send(e.message);

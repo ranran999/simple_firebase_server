@@ -145,6 +145,12 @@ refreshToken -> 以下のトークンを恒久的に取得するためのトー�
 customToken -> firebase の javascript API を利用する場合はログインに使う(有効期限１時間)
 idToken -> firebase の REST API を利用する場合は auth に使う(有効期限１時間)
 
+## 公開用データの設定
+トークン付きでのアクセスを想定しているが、以下のように{"@meta":{"read":"public"}}オブジェクトを作成することでREADを公開することも可能。
+
+例：
+https://bb5ccc.firebaseio.com/store/hogehoge.json
+
 # その他あると便利な機能をつらつらと実装予定
 
 ## 強制 COS
