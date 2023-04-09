@@ -5,18 +5,4 @@
 	"dockerFile": "Dockerfile",
 	// Set *default* container specific settings.json values on container create.
 	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"dbaeumer.vscode-eslint"
-	],
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "yarn install",
-	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
-	// "remoteUser": "node"
-	"runArgs": [
-		"--env-file",
-		".env"
-	]
-	,"features": {
-		"docker-in-docker": "latest"
-	}
 }

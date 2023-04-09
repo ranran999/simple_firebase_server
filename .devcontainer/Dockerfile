@@ -14,4 +14,3 @@ FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:0-16
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
 
 RUN yarn global add firebase-tools
-RUN curl https://cli-assets.heroku.com/install.sh | sh
